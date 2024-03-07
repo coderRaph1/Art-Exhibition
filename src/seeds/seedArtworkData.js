@@ -1,35 +1,31 @@
-const axios = require('axios')
-const db = require('../database/connection')
+const axios = require("axios")
+const db = require("../database/connection")
 const { HARVARD_API_KEY } = process.env
 
 const harvardApiUrl = `https://api.harvardartmuseums.org/object?apikey=${HARVARD_API_KEY}`
-const chicagoApiUrl = 'https://api.artic.edu/api/v1/artworks'
+const chicagoApiUrl = "https://api.artic.edu/api/v1/artworks"
 
 function seedArtworks() {
-
   const checkIfArtworkExists = (title) => {
-    return db.query('SELECT 1 FROM artworks WHERE title = $1', [title])
-      .then(res => res.rows.length > 0) 
-  }
+    return db
+      .query("SELECT 1 FROM artworks WHERE title = $1", [title])
+      .then((res) => res.rows.length > 0)}
 
-  function fetchHarvardData(){
-    return axios.get(harvardApiUrl)
-      .then(response => {
+  function fetchHarvardData() {
+    return axios
+      .get(harvardApiUrl)
+      .then((response) => {
         const harvardArtworks = response.data.records
-        const harvardArtworkPromises = harvardArtworks.map(artwork => {
-          return checkIfArtworkExists(artwork.title)
-            .then(exists => {
-              if (exists) {
-                return db.query(
-                  'INSERT INTO artworks (title, artist, museum, image_url) VALUES ($1, $2, $3, $4)',
-                  [artwork.title, artwork.people[0].name, 'Harvard Art Museums', artwork.primaryimageurl]
-                )
-              } 
-              // else {
-              //   console.log(`Artwork already exists: ${artwork.title}`)
-              // }
-            })
-        })
+        const harvardArtworkPromises = harvardArtworks.map((artwork) => {
+          return checkIfArtworkExists(artwork.title).then((exists) => {
+            if (exists) {
+              return db.query(
+                "INSERT INTO artworks (title, artist, museum, image_url) VALUES ($1, $2, $3, $4)",
+                [artwork.title,
+                  artwork.people[0].name,
+                  "Harvard Art Museums",
+                  artwork.primaryimageurl])}
+          })})
         return Promise.all(harvardArtworkPromises)
       })
       .catch(err => {
@@ -75,16 +71,18 @@ function seedArtworks() {
     .then(results => {
       console.log(`Successfully inserted ${results.length} datasets.`)
     })
-    .catch(err => {
-      console.error('Error seeding data:', err)
+    .catch((err) => {
+      console.error("Error seeding data:", err)
     })
 }
 
-seedArtworks().then(() => {
-  console.log('Seeding completed.')
-}).catch(err => {
-  console.error('Seeding failed:', err)
-})
+seedArtworks()
+  .then(() => {
+    console.log("Seeding completed.")
+  })
+  .catch((err) => {
+    console.error("Seeding failed:", err)
+  })
 
 module.exports = { seedArtworks }
 
