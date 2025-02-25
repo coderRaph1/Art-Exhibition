@@ -1,0 +1,35 @@
+DROP TABLE IF EXISTS collection_artworks CASCADE
+DROP TABLE IF EXISTS collections CASCADE
+DROP TABLE IF EXISTS artworks CASCADE
+DROP TABLE IF EXISTS users CASCADE
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE TABLE artworks (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    artist VARCHAR(255),
+    museum VARCHAR(255),
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE TABLE collections (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE TABLE collection_artworks (
+  id SERIAL PRIMARY KEY,
+  collection_id INT NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+  artwork_id INT NOT NULL REFERENCES artworks(id) ON DELETE CASCADE,
+  UNIQUE (collection_id, artwork_id)
+)
