@@ -7,7 +7,7 @@
     "test": "NODE_ENV=test PORT=3001 jest",
     "serve": "node server.js",
     "dev": "PORT=3001 nodemon server.js",
-    "seed": "NODE_ENV=production node seeds/seedArtworkData.js"
+    "seed": "NODE_ENV=production node src/seeds/seedArtworkData.js"
   },
   "keywords": [],
   "author": "",
