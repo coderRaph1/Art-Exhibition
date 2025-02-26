@@ -6,6 +6,7 @@ const harvardApiUrl = `https://api.harvardartmuseums.org/object?apikey=${HARVARD
 const chicagoApiUrl = "https://api.artic.edu/api/v1/artworks"
 
 function seedArtworks() {
+
   const checkIfArtworkExists = (title) => {
     return db
       .query("SELECT 1 FROM artworks WHERE title = $1", [title])

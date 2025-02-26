@@ -46,22 +46,42 @@ const pool = new Pool({
 
 // module.exports = new Pool(config)
 
+// require('dotenv').config();  // This will load variables from .env
+
+// // const { Pool } = require("pg");
+// // const config = require("../config/env")
+
+// // const ENV = config.NODE_ENV;
+// // const isProduction = ENV === "production"
+
+// // if (!process.env.DATABASE_URL) {
+// //   throw new Error("DB_URL or DATABASE_URL not set")
+// // }
+
+// // const poolConfig = {
+// //   connectionString: isProduction ? process.env.DATABASE_URL : config.DB_URL,
+// //   max: isProduction ? 5 : 10,
+// //   ssl: isProduction ? { rejectUnauthorized: false } : false,
+// // }
+
+// // // console.log("Connecting to database:", poolConfig.connectionString);
+
+// // const pool = new Pool(poolConfig)
+
+// // module.exports = pool
+
+
 const { Pool } = require("pg");
-const config = require("../config/env");
+require("dotenv").config(); // Ensure environment variables are loaded
 
-const ENV = config.NODE_ENV;
-const isProduction = ENV === "production";
+const isProduction = process.env.NODE_ENV === "production";
+const connectionString = isProduction ? process.env.DATABASE_URL : process.env.DB_URL;
 
-if (!config.DB_URL && !process.env.DATABASE_URL) {
-  throw new Error("DB_URL or DATABASE_URL not set");
-}
+console.log("Connecting to database:", connectionString); 
 
-const poolConfig = {
-  connectionString: isProduction ? process.env.DATABASE_URL : config.DB_URL,
-  max: isProduction ? 5 : 10,
+const pool = new Pool({
+  connectionString,
   ssl: isProduction ? { rejectUnauthorized: false } : false,
-};
-
-const pool = new Pool(poolConfig);
+});
 
 module.exports = pool;
