@@ -6,6 +6,7 @@ const harvardApiUrl = `https://api.harvardartmuseums.org/object?apikey=${HARVARD
 const chicagoApiUrl = 'https://api.artic.edu/api/v1/artworks'
 
 function seedArtworks() {
+
   const checkIfArtworkExists = (title) => {
     return db.query('SELECT 1 FROM artworks WHERE title = $1', [title])
       .then(res => res.rows.length > 0) 
@@ -14,6 +15,7 @@ function seedArtworks() {
   const fetchHarvardData = () => {
     return axios.get(harvardApiUrl)
       .then(response => {
+        // console.log('Harvard data fetched:', response.data.records);  // Add this log
         const harvardArtworks = response.data.records
         const harvardArtworkPromises = harvardArtworks.map(artwork => {
           return checkIfArtworkExists(artwork.title)
@@ -38,6 +40,7 @@ function seedArtworks() {
   const fetchChicagoData = () => {
     return axios.get(chicagoApiUrl)
       .then(response => {
+        // console.log('Chicago data fetched:', response.data.data);  // Add this log
         const chicagoArtworks = response.data.data
         const chicagoArtworkPromises = chicagoArtworks.map(artwork => {
           const title = artwork.title || 'Untitled'
@@ -65,7 +68,7 @@ function seedArtworks() {
       })
   }
 
-  return Promise.all([fetchHarvardData, fetchChicagoData])
+  return Promise.all([fetchHarvardData(), fetchChicagoData()])
     .then(() => {
       console.log('Artworks data seeded successfully!')
     })
@@ -75,11 +78,9 @@ function seedArtworks() {
 }
 
 seedArtworks().then(() => {
-  console.log('Seeding completed.');
-  process.exit(0);
+  console.log('Seeding completed.')
 }).catch(err => {
-  console.error('Seeding failed:', err);
-  process.exit(1);
-});
+  console.error('Seeding failed:', err)
+})
 
 module.exports = { seedArtworks }
