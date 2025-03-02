@@ -8,8 +8,7 @@ const { errorHandler, notFound } = require('./src/middleware/error_handler')
 const { seedArtworks } = require('./src/seeds/seedArtworkData')
 
 if (process.env.NODE_ENV !== 'test') {
-  seedArtworks()
-}
+  seedArtworks()}
 
 app.use(cors())
 
@@ -20,8 +19,6 @@ app.use('/api/', collectionsRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
-
-// const PORT = process.env.PORT || (process.env.NODE_ENV === 'test' ? 3001 : 3000)
 
 const PORT = process.env.PORT || 3000
 
